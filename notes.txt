@@ -1,0 +1,7 @@
+mkdir techpulse-ai
+cd techpulse-ai
+
+uv init --python 3.13
+uv python pin 3.13
+uv sync
+uv add feedparser
