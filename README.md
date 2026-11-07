@@ -1,6 +1,6 @@
 # TechPulse AI – Personal Technology Intelligence Platform
 
-![TechPulse AI](https://images.openai.com/static-rsc-4/noyzWs7-3vYtM_vjq0-MiNZ3JIuIs8zRRoIcBe5ND2M8rwZtcXW7jhC6kYr0tVqX9tcTnBLdq3xG80sOsQFaW_3cpeZIqaxaRi9BwQCJ-w8cmG466mPcYAN2aNK3okmKDRHitAXD6WI5TxVgFKaBbbUpmstdadGzc9ZNmMcNXJz55JG3-mx-8lMgF5NoZ8DX?purpose=fullsize)
+![TechPulse AI](assets/techpulse-rss-banner.png)
 
 TechPulse AI is an AI-powered personal technology intelligence platform designed to discover, analyse, prioritise, and deliver relevant technology updates based on an individual's interests, learning goals, and career direction.
 
