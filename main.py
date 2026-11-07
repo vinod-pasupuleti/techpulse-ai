@@ -36,10 +36,16 @@ def parse_rss_feed(rss_url: str):
 def collect_news(rss_urls: list[str]) -> list[dict]:
     articles = []
     seen_links = set()
+    total = 0
+    invalid_count = 0
+    duplicate_count = 0
+
 
     for rss_url in rss_urls:
         try:
             feed = parse_rss_feed(rss_url)
+            total += len(feed.entries)
+            
             if feed is None:
                 continue
 
@@ -49,9 +55,11 @@ def collect_news(rss_urls: list[str]) -> list[dict]:
 
                 # Validate required fields
                 if not title or not link:
+                    invalid_count += 1
                     continue
 
                 if link in seen_links:
+                    duplicate_count += 1
                     continue
                 
                 seen_links.add(link)
@@ -70,6 +78,10 @@ def collect_news(rss_urls: list[str]) -> list[dict]:
         except Exception as e:
             print(f"Error fetching {rss_url}: {e}")
             continue
+    print(f"Total RSS entries: {total}")
+    print(f"Invalid articles: {invalid_count}")
+    print(f"Duplicate articles: {duplicate_count}")
+    print(f"Unique articles collected: {len(articles)}")
 
     return articles
 
