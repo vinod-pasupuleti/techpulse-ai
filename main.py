@@ -35,16 +35,30 @@ def parse_rss_feed(rss_url: str):
 
 def collect_news(rss_urls: list[str]) -> list[dict]:
     articles = []
+    seen_links = set()
 
     for rss_url in rss_urls:
         try:
             feed = parse_rss_feed(rss_url)
-            if feed is None: continue
+            if feed is None:
+                continue
 
             for entry in feed.entries:
+                title = entry.get("title", "").strip()
+                link = entry.get("link", "").strip()
+
+                # Validate required fields
+                if not title or not link:
+                    continue
+
+                if link in seen_links:
+                    continue
+                
+                seen_links.add(link)
+
                 articles.append({
-                    "title": entry.get("title"),
-                    "link": entry.get("link"),
+                    "title": title,
+                    "link": link,
                     "published": entry.get("published"),
                     "source": feed.feed.get("title", "Unknown")
                 })
