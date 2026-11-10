@@ -7,3 +7,12 @@ uv sync
 uv add feedparser
 
 uv add certifi
+
+
+SELECT version();
+SELECT current_database(), current_user;
+
+CREATE DATABASE techpulse_ai;
+
+SELECT current_database();
+uv add sqlalchemy "psycopg[binary]"

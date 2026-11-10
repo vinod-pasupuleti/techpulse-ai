@@ -4,6 +4,7 @@ import certifi
 import feedparser
 
 from urllib.request import Request, urlopen
+from datetime import datetime, timezone, timedelta
 
 RSS_URLS: list[str] = [
     "https://blog.google/technology/ai/rss/",
@@ -12,6 +13,8 @@ RSS_URLS: list[str] = [
     "https://aws.amazon.com/blogs/machine-learning/feed/",
     "https://huggingface.co/blog/feed.xml"
 ]
+
+cutoff_date = datetime.now(timezone.utc) - timedelta(days=30)
 
 
 def parse_rss_feed(rss_url: str):
@@ -52,6 +55,7 @@ def collect_news(rss_urls: list[str]) -> list[dict]:
             for entry in feed.entries:
                 title = entry.get("title", "").strip()
                 link = entry.get("link", "").strip()
+                published_date = entry.get("published_parsed")
 
                 # Validate required fields
                 if not title or not link:
@@ -64,10 +68,16 @@ def collect_news(rss_urls: list[str]) -> list[dict]:
                 
                 seen_links.add(link)
 
+                if published_date:
+                    published_date = datetime(
+                        *published_date[:6],
+                        tzinfo=timezone.utc
+                    )
+
                 articles.append({
                     "title": title,
                     "link": link,
-                    "published": entry.get("published"),
+                    "published": published_date,
                     "source": feed.feed.get("title", "Unknown")
                 })
 
@@ -75,6 +85,13 @@ def collect_news(rss_urls: list[str]) -> list[dict]:
                 f"Source: {feed.feed.get('title', 'Unknown')} "
                 f"| Articles: {len(feed.entries)}"
             )
+
+            print(
+                f"Published: {entry.get('published')}"
+                f" | Published parsed: {entry.get('published_parsed')}"
+            )
+
+            print(type(published_date), published_date)
         except Exception as e:
             print(f"Error fetching {rss_url}: {e}")
             continue
@@ -88,8 +105,19 @@ def collect_news(rss_urls: list[str]) -> list[dict]:
 
 if __name__ == "__main__":
     articles = collect_news(RSS_URLS)
+    articles.sort(
+    key=lambda article: article["published"] or datetime.min.replace(tzinfo=timezone.utc),
+    reverse=True)
 
     print(f"\nTotal articles collected: {len(articles)}")
 
     for article in articles[:5]:
-        print(article)
+        print(article["published"], article["title"])
+
+    latest_articles = [
+        article for article in articles
+        if article["published"] is not None
+        and article["published"] >= cutoff_date
+    ]
+
+    print(f"Articles from last 30 days: {len(latest_articles)}")
