@@ -14,7 +14,7 @@ RSS_URLS: list[str] = [
     "https://huggingface.co/blog/feed.xml"
 ]
 
-cutoff_date = datetime.now(timezone.utc) - timedelta(days=30)
+
 
 
 def parse_rss_feed(rss_url: str):
@@ -47,10 +47,12 @@ def collect_news(rss_urls: list[str]) -> list[dict]:
     for rss_url in rss_urls:
         try:
             feed = parse_rss_feed(rss_url)
-            total += len(feed.entries)
             
             if feed is None:
                 continue
+
+            total += len(feed.entries)
+            
 
             for entry in feed.entries:
                 title = entry.get("title", "").strip()
@@ -85,13 +87,6 @@ def collect_news(rss_urls: list[str]) -> list[dict]:
                 f"Source: {feed.feed.get('title', 'Unknown')} "
                 f"| Articles: {len(feed.entries)}"
             )
-
-            print(
-                f"Published: {entry.get('published')}"
-                f" | Published parsed: {entry.get('published_parsed')}"
-            )
-
-            print(type(published_date), published_date)
         except Exception as e:
             print(f"Error fetching {rss_url}: {e}")
             continue
@@ -104,6 +99,7 @@ def collect_news(rss_urls: list[str]) -> list[dict]:
 
 
 if __name__ == "__main__":
+    cutoff_date = datetime.now(timezone.utc) - timedelta(days=30)
     articles = collect_news(RSS_URLS)
     articles.sort(
     key=lambda article: article["published"] or datetime.min.replace(tzinfo=timezone.utc),
